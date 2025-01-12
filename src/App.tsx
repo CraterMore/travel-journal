@@ -1,62 +1,59 @@
-import { useState } from 'react';
-import logo from './assets/images/logo.svg';
+import { useState, useEffect } from 'react';
+import LocationEntry from './assets/components/LocationEntry';
+import { Map, MapCameraChangedEvent } from '@vis.gl/react-google-maps';
 
 const App = () => {
-  const [count, setCount] = useState(0);
+
+
+  interface NotionData {
+    object: string;
+    results: any[];
+  }
+
+  const [data, setData] = useState<NotionData | null>(null);
+
+    useEffect(() => {
+        fetch('/api/getNotionData?databaseId=179841179fa380349062c49a3cb5429f')
+            .then((response) => response.json())
+            .then((data) => setData(data))
+            .catch((error) => console.error("Error fetching data:", error));
+    }, []);
+
+  // async function fetchData() {
+  //   try {
+  //     const databaseId : string = process.env.NOTION_PAGE_ID || '';
+  //     const response = await notion.databases.retrieve({ database_id: databaseId });
+  //     console.log(response);
+  //   } catch (error) {
+  //     console.log("error", error);
+  //   }
+  // }
+  
 
   return (
-    <div className="text-center selection:bg-green-900">
-      <header className="flex min-h-screen flex-col items-center justify-center bg-[#282c34] text-white">
-        <img
-          src={logo}
-          className="animate-speed h-60 motion-safe:animate-spin"
-          alt="logo"
-        />
-        <style>
-          {
-            '\
-            .animate-speed{\
-              animation-duration:20s;\
-            }\
-          '
-          }
-        </style>
-        <p className="bg-gradient-to-r from-emerald-300 to-sky-300 bg-clip-text text-5xl font-black text-transparent selection:bg-transparent">
-          Vite + React + Typescript + Tailwindcss
-        </p>
-        <p className="mt-3">
-          <button
-            type="button"
-            className="my-6 rounded bg-gray-300 px-2 py-2 text-[#282C34] transition-all hover:bg-gray-200"
-            onClick={() => setCount((count) => count + 1)}
-          >
-            count is: {count}
-          </button>
-        </p>
-        <p>
-          Edit <code className="text-[#8d96a7]">App.tsx</code> and save to test
-          HMR updates.
-        </p>
-        <p className="mt-3 flex gap-3 text-center text-[#8d96a7]">
-          <a
-            className="text-[#61dafb] transition-all hover:text-blue-400"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-          {' | '}
-          <a
-            className="text-[#61dafb] transition-all hover:text-blue-400"
-            href="https://vitejs.dev/guide/features.html"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Vite Docs
-          </a>
-        </p>
-      </header>
+    <div className="max-w-screen-lg mx-auto bg-slate-300 flex h-screen">
+      <div className="w-1/3 bg-green-100 flex flex-col">
+        <h1 className="font-bold text-4xl p-2 text-center">Carter's Travel Log</h1>
+        <div>
+          {data && data.results.map((item: any, index: number) => (
+            <a key={index}>
+              <LocationEntry details={item}/>
+            </a>
+          ))}
+        </div>
+      </div>
+      <div className="w-2/3 bg-blue-100">
+        <Map
+          defaultZoom={14}
+          defaultCenter={ { lat: 51.509865, lng: -0.118092 } }
+          streetViewControl={false}
+          fullscreenControl={false}
+          // onCameraChanged={ (ev: MapCameraChangedEvent) =>
+          //   console.log('camera changed:', ev.detail.center, 'zoom:', ev.detail.zoom)
+          // }
+        >
+        </Map>
+      </div>
     </div>
   );
 };

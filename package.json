@@ -8,7 +8,14 @@
     "build": "tsc && vite build",
     "preview": "vite preview"
   },
+  "engines": {
+    "node": "20.x"
+  },
   "dependencies": {
+    "@googlemaps/markerclusterer": "2.5.3",
+    "@notionhq/client": "2.2.15",
+    "@vis.gl/react-google-maps": "1.5.0",
+    "dotenv": "16.4.7",
     "react": "18.3.1",
     "react-dom": "18.3.1"
   },
@@ -19,6 +26,7 @@
     "@types/react-dom": "18.3.0",
     "@typescript-eslint/eslint-plugin": "6.13.1",
     "@typescript-eslint/parser": "6.13.1",
+    "@vercel/node": "5.0.2",
     "@vitejs/plugin-react-swc": "3.7.0",
     "autoprefixer": "10.4.14",
     "eslint": "8.55.0",
