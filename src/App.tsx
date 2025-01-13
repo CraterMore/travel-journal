@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import LocationEntry from './assets/components/LocationEntry';
-import { Map, MapCameraChangedEvent } from '@vis.gl/react-google-maps';
+import { Map } from '@vis.gl/react-google-maps';
 
 const App = () => {
 
