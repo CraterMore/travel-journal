@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import LocationEntry from './assets/components/LocationEntry';
-import { Map } from '@vis.gl/react-google-maps';
+import { Map, AdvancedMarker, Pin } from '@vis.gl/react-google-maps';
+type Poi ={ key: string, location: google.maps.LatLngLiteral }
 
 const App = () => {
 
@@ -10,12 +11,30 @@ const App = () => {
     results: any[];
   }
 
+  const [locations, setLocations] = useState<any[]>([]);
+
   const [data, setData] = useState<NotionData | null>(null);
+
+  function compileLocations(data: any[]) {
+    const locations = data.map((item: any) => {
+      return {
+        key: item.properties.Name.title[0].text.content,
+        location: {
+          lat: item.properties.Latitude.number,
+          lng: item.properties.Longitude.number,
+        }
+      };
+    });
+    setLocations(locations);
+  }
 
     useEffect(() => {
         fetch('/api/getNotionData?databaseId=179841179fa380349062c49a3cb5429f')
             .then((response) => response.json())
-            .then((data) => setData(data))
+            .then((data) => {
+              setData(data);
+              compileLocations(data.results);
+            })
             .catch((error) => console.error("Error fetching data:", error));
     }, []);
 
@@ -48,13 +67,29 @@ const App = () => {
           defaultCenter={ { lat: 51.509865, lng: -0.118092 } }
           streetViewControl={false}
           fullscreenControl={false}
+          mapId="c43f84728610854c"
           // onCameraChanged={ (ev: MapCameraChangedEvent) =>
           //   console.log('camera changed:', ev.detail.center, 'zoom:', ev.detail.zoom)
           // }
         >
+          <PoiMarkers pois={locations} />
         </Map>
       </div>
     </div>
+  );
+};
+
+const PoiMarkers = (props: {pois: Poi[]}) => {
+  return (
+    <>
+      {props.pois.map( (poi: Poi) => (
+        <AdvancedMarker
+          key={poi.key}
+          position={poi.location}>
+        <Pin background={'#FBBC04'} glyphColor={'#000'} borderColor={'#000'} />
+        </AdvancedMarker>
+      ))}
+    </>
   );
 };
 
