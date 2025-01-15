@@ -12,7 +12,7 @@ export default function LocationEntry(props: {details: any, selected: boolean}) 
             </div>
             <div className="self-center">
                 <div className="text-3xl font-bold">
-                    4.3
+                    {props.details.properties.Rating.number}
                 </div>
             </div>
         </div>
