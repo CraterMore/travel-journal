@@ -2,10 +2,14 @@ import { useState, useEffect, useCallback } from 'react';
 import LocationEntry from './assets/components/LocationEntry';
 import { Map, AdvancedMarker, Pin, useMap } from '@vis.gl/react-google-maps';
 import { FaArrowLeft } from "react-icons/fa";
+import LoadingList from './assets/components/LoadingList';
+import { MdLocationPin } from "react-icons/md";
+import { FaExternalLinkAlt } from "react-icons/fa";
+import { MdDateRange } from "react-icons/md";
 type Poi ={ key: string, location: google.maps.LatLngLiteral }
 
 const App = () => {
-
+  const map = useMap();
 
   interface NotionData {
     object: string;
@@ -56,13 +60,19 @@ const App = () => {
     <div className="bg-lionsmane">
       <div className="max-w-screen-xl mx-auto bg-slate-300 flex h-screen">
         <div className="w-1/3 bg-lionsmane flex flex-col">
-          <h1 className="font-bold text-4xl p-2 text-center">Carter's Travel Log</h1>
+          <h1 className="font-bold text-4xl p-2 text-center font-display">Carter's Travel Log</h1>
           <div className="flex flex-col gap-2 px-2">
-            {data && data.results.map((item: any, index: number) => (
-              <a className="cursor-pointer" key={index} onClick={() => {setSelected(item.properties.Name.title[0].text.content)}}>
+            {data ? data.results.map((item: any, index: number) => (
+              <a className="cursor-pointer" key={index} onClick={() => {
+                setSelected(item.properties.Name.title[0].text.content)
+                map?.panTo({lat: item.properties.Latitude.number, lng: item.properties.Longitude.number});
+                }}>
                 <LocationEntry details={item} selected={selected==item.properties.Name.title[0].text.content}/>
               </a>
-            ))}
+            ))
+            :
+            <LoadingList/>
+          }
           </div>
         </div>
         <div className="w-2/3 bg-midnight relative flex flex-col justify-end px-4">
@@ -85,12 +95,44 @@ const App = () => {
           {selected &&
           <div className="bg-white drop-shadow-xl h-2/3 w-96 rounded-t-3xl relative z-10">
             <div className="absolute flex flex-row gap-3 justify-start px-4 -top-10 -right-5 w-[110%] rounded-2xl rotate-1 h-24 bg-marigold">
-              <FaArrowLeft size={32} className="my-auto cursor-pointer" onClick={() => setSelected(null)}/>
-              <div className="my-auto h-fit w-fit text-3xl">
-                {selected}
+              <div className="my-auto min-w-fit">
+                <FaArrowLeft size={32} className="cursor-pointer" onClick={() => setSelected(null)}/>
+              </div>
+              <div className="my-auto grow h-fit overflow-hidden">
+                <div className="text-3xl font-display font-bold">
+                  {selected}
+                </div>
+                <p className="truncate text-orange-900">
+                  {data?.results.find((item: any) => item.properties.Name.title[0].text.content === selected).properties.Description.rich_text[0].text.content}
+                </p>
               </div>
             </div>
-            {selected}
+            <div className="mt-14 px-4 pt-4">
+              <div className="flex flex-row w-full gap-2">
+                <div className="grow flex flex-col">
+                  <div className="flex overflow-hidden gap-1">
+                    <MdLocationPin size={26} color="#708C69"/>
+                    <h1 className="text-lg truncate font-light">Address</h1>
+                  </div>
+                  <div className="flex overflow-hidden gap-1">
+                    <MdDateRange size={26} color="#708C69"/>
+                    <h1 className="text-lg truncate font-light">Visited on {data?.results.find((item: any) => item.properties.Name.title[0].text.content === selected).properties.Visited.date.start}</h1>
+                  </div>
+                  <div className="my-auto">
+                    <h2 className="text-2xl">Rating: {data?.results.find((item: any) => item.properties.Name.title[0].text.content === selected).properties.Rating.number}</h2>
+                  </div>
+                </div>
+                <div>
+                <div className="bg-midnight rounded-full h-16 w-16 p-5 mx-auto">
+                  <FaExternalLinkAlt color="white" className="w-full h-full"/>
+                </div>
+                <p className="max-w-16 text-sm text-center text-midnight mt-2">
+                  Google Maps
+                </p>
+                </div>
+                
+              </div>
+            </div>
           </div>
           }
         </div>
