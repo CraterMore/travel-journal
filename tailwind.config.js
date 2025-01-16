@@ -11,6 +11,7 @@ export default {
       },
       fontFamily: {
         display: 'Yeseva One',
+        handwritten: 'Caveat',
       }
     },
     

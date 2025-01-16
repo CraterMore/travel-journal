@@ -4,6 +4,11 @@ import { MdDateRange } from "react-icons/md";
 import { FaArrowLeft } from "react-icons/fa";
 
 export default function PlaceDetailsPane(props : {data: any, setSelected: (place: string | null) => void}) {
+    function formatDate(date: string) {
+        let dateSliced = date.split("-");
+        dateSliced = dateSliced.map((item) => item.replace(/^0+/, ''));
+        return (dateSliced[1]+"/"+dateSliced[2]+"/"+dateSliced[0]);
+    }
 
     return (
     <div className="bg-white drop-shadow-xl h-2/3 w-96 rounded-t-3xl relative z-10">
@@ -25,11 +30,11 @@ export default function PlaceDetailsPane(props : {data: any, setSelected: (place
             <div className="grow flex flex-col">
                 <div className="flex overflow-hidden gap-1">
                 <MdLocationPin size={26} color="#708C69"/>
-                <h1 className="text-lg truncate font-light">Address</h1>
+                <h1 className="text-lg truncate font-light">{props.data.properties.Address.rich_text[0].text.content}</h1>
                 </div>
                 <div className="flex overflow-hidden gap-1">
                 <MdDateRange size={26} color="#708C69"/>
-                <h1 className="text-lg truncate font-light">Visited on {props.data.properties.Visited.date.start}</h1>
+                <h1 className="text-lg truncate font-light">Visited on {formatDate(props.data.properties.Visited.date.start)}</h1>
                 </div>
                 <div className="my-auto">
                 <h2 className="text-2xl">Rating: {props.data.properties.Rating.number}</h2>
@@ -42,9 +47,24 @@ export default function PlaceDetailsPane(props : {data: any, setSelected: (place
             <p className="max-w-16 text-sm text-center text-midnight mt-2">
                 Google Maps
             </p>
+        </div>
+        </div>
+            <p className="font-handwritten text-2xl text-center h-fit my-3 font-semibold">"{props.data.properties.Anecdote.rich_text[0].text.content}"</p>
+        </div>
+        <div className="relative mt-8">
+            {props.data.properties.Images.files[0] ? 
+            <div className="absolute left-4 w-40 h-40 -rotate-6 border-midnight border-4">
+                <img src={props.data.properties.Images.files[0].file.url} className="w-full h-full object-cover bg-orange-100"/>
             </div>
-            
+            : <></>}
+            {props.data.properties.Images.files[1] ? 
+            <div className="absolute left-36 top-8 w-40 h-40 rotate-2 border-midnight border-4">
+                <img src={props.data.properties.Images.files[1].file.url} className="w-full h-full object-cover bg-orange-100"/>
             </div>
+            : <></>}
+            {/* {props.data.properties.Images.files.map((image: any, index: number) => (
+                <img src={image.file.url} key={index} className="w-full h-full"/>
+            ))} */}
         </div>
     </div>
     );
