@@ -24,13 +24,13 @@ export default function PlaceDetailsPane(props : {data: any, setSelected: (place
     }
 
     return (
-    <div className="bg-white drop-shadow-xl h-2/3 w-96 rounded-t-3xl relative z-10">
-        <div className="absolute flex flex-row gap-3 justify-start px-4 -top-10 -right-5 w-[110%] rounded-2xl rotate-1 h-24 bg-marigold">
+    <div className="bg-white drop-shadow-xl h-2/3 w-96 rounded-t-3xl relative z-10 overflow-y-auto">
+        <div className="flex flex-row gap-3 justify-start px-4 w-full h-20 bg-marigold">
             <div className="my-auto min-w-fit">
             <FaArrowLeft size={32} className="cursor-pointer" onClick={() => props.setSelected(null)}/>
             </div>
             <div className="my-auto grow h-fit overflow-hidden">
-            <div className="text-3xl font-display font-bold">
+            <div className="text-3xl font-display font-bold line-clamp-1">
                 {props.data.properties.Name.title[0].text.content}
             </div>
             <p className="truncate text-orange-900">
@@ -38,7 +38,7 @@ export default function PlaceDetailsPane(props : {data: any, setSelected: (place
             </p>
             </div>
         </div>
-        <div className="mt-14 px-4 pt-4">
+        <div className="px-4 pt-4">
             <div className="flex flex-row w-full gap-2">
                 <div className="grow flex flex-col">
                     <div className="flex overflow-hidden gap-1">
@@ -67,14 +67,18 @@ export default function PlaceDetailsPane(props : {data: any, setSelected: (place
         </div>
         <div className="relative mt-8">
             {props.data.properties.Images.files[0] ? 
-            <div className="absolute left-4 w-40 h-40 -rotate-6 border-midnight border-4">
-                <img src={props.data.properties.Images.files[0].file.url} className="w-full h-full object-cover bg-orange-100"/>
+            <div className="absolute left-4 shadow-xl -rotate-6 w-48 h-56 bg-celeste flex flex-row justify-center">
+                <div className="w-40 h-40 border-midnight border-4 mt-4">
+                    <img src={props.data.properties.Images.files[0].file.url} className="w-full h-full object-cover bg-orange-100"/>
+                </div>
             </div>
             : <></>}
             {props.data.properties.Images.files[1] ? 
-            <div className="absolute left-36 top-8 w-40 h-40 rotate-2 border-midnight border-4">
-                <img src={props.data.properties.Images.files[1].file.url} className="w-full h-full object-cover bg-orange-100"/>
-            </div>
+            <div className="absolute left-36 shadow-xl top-8 rotate-2 w-48 h-56 bg-celeste flex flex-row justify-center">
+                <div className="w-40 h-40 border-midnight border-4 mt-4">
+                    <img src={props.data.properties.Images.files[1].file.url} className="w-full h-full object-cover bg-orange-100"/>
+                </div>
+             </div>
             : <></>}
             {/* {props.data.properties.Images.files.map((image: any, index: number) => (
                 <img src={image.file.url} key={index} className="w-full h-full"/>
