@@ -58,6 +58,7 @@ const App = () => {
       <div className="max-w-screen-xl mx-auto bg-slate-300 flex h-screen">
         <div className="w-1/3 bg-lionsmane flex flex-col">
           <h1 className="font-bold text-4xl p-2 text-center font-display">Carter's Travel Log</h1>
+          {/* <div className="text-center text-sm -translate-y-2">Last update:</div> */}
           <div className="flex flex-col gap-2 px-2">
             {data ? data.results.map((item: any, index: number) => (
               <a className="cursor-pointer" key={index} onClick={() => {

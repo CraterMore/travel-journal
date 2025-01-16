@@ -2,12 +2,25 @@ import { MdLocationPin } from "react-icons/md";
 import { FaExternalLinkAlt } from "react-icons/fa";
 import { MdDateRange } from "react-icons/md";
 import { FaArrowLeft } from "react-icons/fa";
+import { FaStar } from "react-icons/fa";
+import { FaStarHalf } from "react-icons/fa";
 
 export default function PlaceDetailsPane(props : {data: any, setSelected: (place: string | null) => void}) {
     function formatDate(date: string) {
         let dateSliced = date.split("-");
         dateSliced = dateSliced.map((item) => item.replace(/^0+/, ''));
         return (dateSliced[1]+"/"+dateSliced[2]+"/"+dateSliced[0]);
+    }
+
+    function renderStars(rating: number) {
+        let stars = [];
+        for (let i = 0; i < Math.floor(rating); i++) {
+            stars.push(<FaStar key={i} size={24} color="#F4A258"/>);
+        }
+        if (rating % 1 >= 0.5) {
+            stars.push(<FaStarHalf key={5} size={24} color="#F4A258"/>);
+        }
+        return stars;
     }
 
     return (
@@ -27,19 +40,20 @@ export default function PlaceDetailsPane(props : {data: any, setSelected: (place
         </div>
         <div className="mt-14 px-4 pt-4">
             <div className="flex flex-row w-full gap-2">
-            <div className="grow flex flex-col">
-                <div className="flex overflow-hidden gap-1">
-                <MdLocationPin size={26} color="#708C69"/>
-                <h1 className="text-lg truncate font-light">{props.data.properties.Address.rich_text[0].text.content}</h1>
+                <div className="grow flex flex-col">
+                    <div className="flex overflow-hidden gap-1">
+                        <MdLocationPin size={26} color="#708C69"/>
+                        <h1 className="text-lg truncate font-light">{props.data.properties.Address.rich_text[0].text.content}</h1>
+                    </div>
+                    <div className="flex overflow-hidden gap-1">
+                        <MdDateRange size={26} color="#708C69"/>
+                        <h1 className="text-lg truncate font-light">Visited on {formatDate(props.data.properties.Visited.date.start)}</h1>
+                    </div>
+                    <div className="my-auto flex flex-row items-center">
+                        <div className="text-xl mr-1 font-semibold">{props.data.properties.Rating.number}/5</div>
+                        {renderStars(props.data.properties.Rating.number)}
+                    </div>
                 </div>
-                <div className="flex overflow-hidden gap-1">
-                <MdDateRange size={26} color="#708C69"/>
-                <h1 className="text-lg truncate font-light">Visited on {formatDate(props.data.properties.Visited.date.start)}</h1>
-                </div>
-                <div className="my-auto">
-                <h2 className="text-2xl">Rating: {props.data.properties.Rating.number}</h2>
-                </div>
-            </div>
             <div>
             <div className="bg-midnight rounded-full h-16 w-16 p-5 mx-auto">
                 <FaExternalLinkAlt color="white" className="w-full h-full"/>
