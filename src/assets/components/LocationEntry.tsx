@@ -1,4 +1,3 @@
-import { MdFastfood } from "react-icons/md";
 import {renderStars} from "../utils/formattingFunctions";
 
 export default function LocationEntry(props: {details: any, selected: boolean}) {
