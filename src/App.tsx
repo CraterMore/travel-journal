@@ -1,9 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import LocationEntry from './assets/components/LocationEntry';
-import { Map, AdvancedMarker, Pin, useMap } from '@vis.gl/react-google-maps';
+import { Map, AdvancedMarker, useMap } from '@vis.gl/react-google-maps';
 import LoadingList from './assets/components/LoadingList';
 import PlaceDetailsPane from './assets/components/PlaceDetailsPane';
-type Poi ={ key: string, location: google.maps.LatLngLiteral }
+type Poi ={ key: string, markerNum: number, location: google.maps.LatLngLiteral };
 
 const App = () => {
   const map = useMap();
@@ -20,9 +20,10 @@ const App = () => {
   const [data, setData] = useState<NotionData | null>(null);
 
   function compileLocations(data: any[]) {
-    const locations = data.map((item: any) => {
+    const locations = data.map((item: any,) => {
       return {
         key: item.properties.Name.title[0].text.content,
+        markerNum: item.properties.MarkerID.unique_id.number,
         location: {
           lat: item.properties.Latitude.number,
           lng: item.properties.Longitude.number,
@@ -59,7 +60,7 @@ const App = () => {
         <div className="w-1/3 bg-lionsmane flex flex-col">
           <h1 className="font-bold text-4xl p-2 text-center font-display">Carter's Travel Log</h1>
           {/* <div className="text-center text-sm -translate-y-2">Last update:</div> */}
-          <div className="flex flex-col gap-2 px-2">
+          <div className="flex flex-col gap-2 px-3">
             {data ? data.results.map((item: any, index: number) => (
               <a className="cursor-pointer" key={index} onClick={() => {
                 setSelected(item.properties.Name.title[0].text.content)
@@ -85,7 +86,7 @@ const App = () => {
             //   console.log('camera changed:', ev.detail.center, 'zoom:', ev.detail.zoom)
             // }
             >
-              <PoiMarkers pois={locations} setSelected={setSelected} />
+              <PoiMarkers pois={locations} setSelected={setSelected} selected={selected} />
               
             </Map>
             
@@ -99,9 +100,7 @@ const App = () => {
   );
 };
 
-
-
-const PoiMarkers = (props: {pois: Poi[], setSelected: (place: string | null) => void}) => {
+const PoiMarkers = (props: {pois: Poi[], setSelected: (place: string | null) => void, selected: string | null}) => {
   const map = useMap();
   
   const handleClick = useCallback((ev: google.maps.MapMouseEvent) => {
@@ -122,7 +121,10 @@ const PoiMarkers = (props: {pois: Poi[], setSelected: (place: string | null) => 
             props.setSelected(poi.key);
             handleClick(ev);
           }}>
-        <Pin background={'#FBBC04'} glyphColor={'#000'} borderColor={'#000'} />
+            <div className={props.selected===poi.key ? "bg-midnight rounded-full w-10 h-10 animate-bounce border-celeste border-2 flex": "bg-midnight rounded-full w-8 h-8 border-celeste border-2 flex"}>
+              <div className="text-celeste text-center font-bold text-xl m-auto">{poi.markerNum}</div>
+            </div>
+        {/* <Pin background={'#FBBC04'} glyphColor={'#000'} borderColor={'#000'} /> */}
         </AdvancedMarker>
       ))}
     </>
