@@ -16,10 +16,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             database_id: databaseId as string,
             sorts: [
                 {
-                    property: 'Name',
-                    direction: 'ascending',
+                    property: 'Visited',
+                    direction: 'descending',
                 }
-            ]
+            ],
+            filter: {
+                property: 'Visited',
+                date: {
+                    is_not_empty: true
+                }
+            }
         });
 
         res.status(200).json(response);

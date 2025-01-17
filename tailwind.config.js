@@ -9,6 +9,10 @@ export default {
         'herb': '#708C69',
         'marigold': '#F4A258',
       },
+      fontFamily: {
+        display: 'Yeseva One',
+        handwritten: 'Caveat',
+      }
     },
     
   },
