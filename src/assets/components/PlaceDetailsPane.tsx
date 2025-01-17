@@ -4,13 +4,25 @@ import { MdDateRange } from "react-icons/md";
 import { FaArrowLeft } from "react-icons/fa";
 import { formatDate, renderStars } from "../utils/formattingFunctions";
 import { FaMoneyBill } from "react-icons/fa6";
+import { useSpring, animated } from 'react-spring';
+import { useDrag } from '@use-gesture/react';
 
 
 export default function PlaceDetailsPane(props : {data: any, setSelected: (place: string | null) => void}) {
+    const [{ y }, api] = useSpring(() => ({ y: 0 }));
 
+    const bind = useDrag(({ down, movement: [, my], velocity }) => {
+        const trigger = Math.hypot(...velocity) > 0.5;
+        const height = window.innerHeight;
+        if (!down && trigger) {
+            api.start({ y: my > 0 ? height : 0 });
+        } else {
+            api.start({ y: down && my > 0 ? my : 0 });
+        }
+    }, { axis: 'y' });
 
     return (
-    <div className="bg-white drop-shadow-xl h-2/3 w-full md:relative md:w-96 md:rounded-t-3xl fixed z-10 overflow-y-auto">
+    <animated.div {...bind()} style={{y}} className="touch-none bg-white drop-shadow-xl h-2/3 w-full md:relative md:w-96 md:rounded-t-3xl fixed z-10 overflow-y-auto">
         <div className="flex flex-row gap-3 justify-start px-4 w-full h-20 bg-marigold">
             <div className="my-auto min-w-fit">
                 <FaArrowLeft size={36} className="cursor-pointer p-1 hover:p-0 hover:transition-all" onClick={() => props.setSelected(null)}/>
@@ -82,6 +94,6 @@ export default function PlaceDetailsPane(props : {data: any, setSelected: (place
                 <img src={image.file.url} key={index} className="w-full h-full"/>
             ))} */}
         </div>
-    </div>
+    </animated.div>
     );
 }
