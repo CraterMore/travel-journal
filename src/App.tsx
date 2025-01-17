@@ -65,7 +65,7 @@ const App = () => {
 
   return (
     <div className="bg-lionsmane">
-      <div className="max-w-screen-xl mx-auto bg-slate-300 flex md:flex-row flex-col-reverse h-screen">
+      <div className="max-w-screen-xl mx-auto bg-slate-300 flex md:flex-row flex-col-reverse h-dvh">
         <div className="w-full md:w-1/3 bg-lionsmane flex flex-col h-2/3 md:h-full">
           <h1 className="font-bold text-4xl p-2 text-center font-display">Carter's Travel Log</h1>
           {/* <div className="text-center text-sm -translate-y-2">Last update:</div> */}
