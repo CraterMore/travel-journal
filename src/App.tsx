@@ -14,10 +14,10 @@ const App = () => {
   }
 
   const [locations, setLocations] = useState<any[]>([]);
-
   const [selected, setSelected] = useState<string | null>(null);
-
   const [data, setData] = useState<NotionData | null>(null);
+  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 768);
+
 
   function compileLocations(data: any[]) {
     const locations = data.map((item: any,) => {
@@ -43,6 +43,15 @@ const App = () => {
             .catch((error) => console.error("Error fetching data:", error));
     }, []);
 
+    useEffect(() => {
+      const handleResize = () => {
+        setIsMobile(window.innerWidth < 768);
+      };
+  
+      window.addEventListener('resize', handleResize);
+      return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
   // async function fetchData() {
   //   try {
   //     const databaseId : string = process.env.NOTION_PAGE_ID || '';
@@ -56,8 +65,8 @@ const App = () => {
 
   return (
     <div className="bg-lionsmane">
-      <div className="max-w-screen-xl mx-auto bg-slate-300 flex h-screen">
-        <div className="w-1/3 bg-lionsmane flex flex-col">
+      <div className="max-w-screen-xl mx-auto bg-slate-300 flex md:flex-row flex-col-reverse h-screen">
+        <div className="w-full md:w-1/3 bg-lionsmane flex flex-col h-2/3 md:h-full">
           <h1 className="font-bold text-4xl p-2 text-center font-display">Carter's Travel Log</h1>
           {/* <div className="text-center text-sm -translate-y-2">Last update:</div> */}
           <div className="flex flex-col gap-2 px-3">
@@ -73,8 +82,11 @@ const App = () => {
             <LoadingList/>
           }
           </div>
+          {isMobile && selected &&
+            <PlaceDetailsPane data={data?.results.find((item: any) => item.properties.Name.title[0].text.content === selected)} setSelected={setSelected}/>
+          }
         </div>
-        <div className="w-2/3 bg-midnight relative flex flex-col justify-end px-4">
+        <div className="w-full md:w-2/3 bg-midnight relative flex flex-col justify-end px-4 md:h-auto flex-grow">
           <div className="w-full h-full absolute inset-0">
             <Map
             defaultZoom={14}
@@ -91,7 +103,7 @@ const App = () => {
             </Map>
             
           </div>
-          {selected &&
+          {!isMobile && selected &&
           <PlaceDetailsPane data={data?.results.find((item: any) => item.properties.Name.title[0].text.content === selected)} setSelected={setSelected}/>
           }
         </div>

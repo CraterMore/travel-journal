@@ -10,7 +10,7 @@ export default function PlaceDetailsPane(props : {data: any, setSelected: (place
 
 
     return (
-    <div className="bg-white drop-shadow-xl h-2/3 w-96 rounded-t-3xl relative z-10 overflow-y-auto">
+    <div className="bg-white drop-shadow-xl h-2/3 w-full md:relative md:w-96 md:rounded-t-3xl fixed z-10 overflow-y-auto">
         <div className="flex flex-row gap-3 justify-start px-4 w-full h-20 bg-marigold">
             <div className="my-auto min-w-fit">
                 <FaArrowLeft size={36} className="cursor-pointer p-1 hover:p-0 hover:transition-all" onClick={() => props.setSelected(null)}/>
