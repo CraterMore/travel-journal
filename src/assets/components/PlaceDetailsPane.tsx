@@ -31,29 +31,31 @@ export default function PlaceDetailsPane(props : {data: any, setSelected: (place
                         <MdDateRange size={26} color="#708C69"/>
                         <h1 className="text-lg truncate font-light">Visited on {formatDate(props.data.properties.Visited.date.start)}</h1>
                     </div>
-                    <div className="flex overflow-hidden gap-1">
+                    <div className="flex gap-1 ">
                         <MdLocationPin size={26} color="#708C69"/>
-                        <h1 className="text-lg truncate font-light">{props.data.properties.Address.rich_text[0].text.content}</h1>
+                        <h1 className="text-lg w-full font-light">{props.data.properties.Address.rich_text[0].text.content}</h1>
                     </div>
                     
                     <div className="flex overflow-hidden gap-1 items-center">
                         <FaMoneyBill size={24} color="#708C69"/>
                         <h1 className="text-lg ml-1 truncate font-light">{props.data.properties.Price.select.name}</h1>
                     </div>
-                    <div className="my-auto flex flex-row items-center">
-                        <div className="text-xl mr-1 font-semibold">{props.data.properties.Rating.number}/5</div>
-                        {renderStars(props.data.properties.Rating.number, 24)}
-                    </div>
                 </div>
-            <div>
-            <div className="bg-midnight rounded-full h-16 w-16 p-5 mx-auto cursor-pointer hover:bg-sky-800 hover:p-4 hover:transition-all" onClick={() => window.open(props.data.properties["Google Link"].url, '_blank')}>
-                <FaExternalLinkAlt color="white" className="w-full h-full"/>
+                <div>
+                    <div className="bg-midnight rounded-full h-16 w-16 p-5 mx-auto cursor-pointer hover:bg-sky-800 hover:p-4 hover:transition-all" onClick={() => window.open(props.data.properties["Google Link"].url, '_blank')}>
+                        <FaExternalLinkAlt color="white" className="w-full h-full"/>
+                    </div>
+                    <p className="max-w-16 text-sm text-center text-midnight mt-2">
+                        Google Maps
+                    </p>
+                </div>
             </div>
-            <p className="max-w-16 text-sm text-center text-midnight mt-2">
-                Google Maps
-            </p>
-        </div>
-        </div>
+            <div className="flex">
+                <div className="mx-auto flex flex-row items-center">
+                    <div className="text-xl mr-1 font-semibold text-midnight">{props.data.properties.Rating.number}/5</div>
+                    {renderStars(props.data.properties.Rating.number, 24)}
+                </div>
+            </div>
             <p className="font-handwritten text-2xl text-center h-fit my-3 font-semibold">"{props.data.properties.Anecdote.rich_text[0].text.content}"</p>
         </div>
         <div className="relative mt-8">

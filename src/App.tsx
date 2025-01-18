@@ -20,7 +20,7 @@ const App = () => {
 
 
   function compileLocations(data: any[]) {
-    const locations = data.map((item: any,) => {
+    const locations = data.map((item: any) => {
       return {
         key: item.properties.Name.title[0].text.content,
         markerNum: item.properties.MarkerID.unique_id.number,
@@ -33,24 +33,24 @@ const App = () => {
     setLocations(locations);
   }
 
-    useEffect(() => {
-        fetch('/api/getNotionData?databaseId=179841179fa380349062c49a3cb5429f')
-            .then((response) => response.json())
-            .then((data) => {
-              setData(data);
-              compileLocations(data.results);
-            })
-            .catch((error) => console.error("Error fetching data:", error));
-    }, []);
+  useEffect(() => {
+      fetch('/api/getNotionData?databaseId=179841179fa380349062c49a3cb5429f')
+          .then((response) => response.json())
+          .then((data) => {
+            setData(data);
+            compileLocations(data.results);
+          })
+          .catch((error) => console.error("Error fetching data:", error));
+  }, []);
 
-    useEffect(() => {
-      const handleResize = () => {
-        setIsMobile(window.innerWidth < 768);
-      };
-  
-      window.addEventListener('resize', handleResize);
-      return () => window.removeEventListener('resize', handleResize);
-    }, []);
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // async function fetchData() {
   //   try {
@@ -68,7 +68,7 @@ const App = () => {
       <div className="max-w-screen-xl mx-auto bg-slate-300 flex md:flex-row flex-col-reverse h-dvh">
         <div className="w-full md:w-1/3 bg-lionsmane flex flex-col h-2/3 md:h-full">
           <h1 className="font-bold text-4xl p-2 text-center font-display">Carter's Travel Log</h1>
-          {/* <div className="text-center text-sm -translate-y-2">Last update:</div> */}
+          <div className="text-center text-sm -translate-y-2">Check back soon for more!</div>
           <div className="flex flex-col gap-2 px-3">
             {data ? data.results.map((item: any, index: number) => (
               <a className="cursor-pointer" key={index} onClick={() => {
