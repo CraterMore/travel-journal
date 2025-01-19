@@ -90,7 +90,7 @@ const App = () => {
         <div className="w-full md:w-2/3 bg-midnight relative flex flex-col justify-end px-4 md:h-auto flex-grow">
           <div className="w-full h-full absolute inset-0">
             <Map
-            defaultZoom={14}
+            defaultZoom={isMobile ? 13 : 14}
             defaultCenter={ { lat: 51.523114881185045, lng: -0.10665739073381586 } }
             streetViewControl={false}
             fullscreenControl={false}
