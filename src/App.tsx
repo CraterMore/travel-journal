@@ -3,6 +3,7 @@ import LocationEntry from './assets/components/LocationEntry';
 import { Map, AdvancedMarker, useMap } from '@vis.gl/react-google-maps';
 import LoadingList from './assets/components/LoadingList';
 import PlaceDetailsPane from './assets/components/PlaceDetailsPane';
+import { Analytics } from '@vercel/analytics/react';
 type Poi ={ key: string, markerNum: number, location: google.maps.LatLngLiteral };
 
 const App = () => {
@@ -90,7 +91,7 @@ const App = () => {
           <div className="w-full h-full absolute inset-0">
             <Map
             defaultZoom={14}
-            defaultCenter={ { lat: 51.509865, lng: -0.118092 } }
+            defaultCenter={ { lat: 51.523114881185045, lng: -0.10665739073381586 } }
             streetViewControl={false}
             fullscreenControl={false}
             mapId="c43f84728610854c"
@@ -108,6 +109,7 @@ const App = () => {
           }
         </div>
       </div>
+      <Analytics />
     </div>
   );
 };

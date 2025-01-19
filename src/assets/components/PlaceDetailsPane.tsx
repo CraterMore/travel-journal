@@ -76,7 +76,7 @@ export default function PlaceDetailsPane(props : {data: any, setSelected: (place
             {props.data.properties.Images.files[2] ? 
             <div className="absolute left-20 shadow-xl top-48 -rotate-2 w-48 h-56 bg-celeste flex flex-row justify-center">
                 <div className="w-40 h-40 border-midnight border-4 mt-4">
-                    <img src={props.data.properties.Images.files[1].file.url} className="w-full h-full object-cover bg-orange-100"/>
+                    <img src={props.data.properties.Images.files[2].file.url} className="w-full h-full object-cover bg-orange-100"/>
                 </div>
              </div>
             : <></>}
