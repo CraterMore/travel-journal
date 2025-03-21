@@ -4,6 +4,7 @@ import { Map, AdvancedMarker, useMap } from '@vis.gl/react-google-maps';
 import LoadingList from './assets/components/LoadingList';
 import PlaceDetailsPane from './assets/components/PlaceDetailsPane';
 import { Analytics } from '@vercel/analytics/react';
+import ImageFullscreenModal from './assets/components/ImageFullscreenModal';
 type Poi ={ key: string, markerNum: number, location: google.maps.LatLngLiteral };
 
 const App = () => {
@@ -18,6 +19,8 @@ const App = () => {
   const [selected, setSelected] = useState<string | null>(null);
   const [data, setData] = useState<NotionData | null>(null);
   const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 768);
+  const [imageModalOpen, setImageModalOpen] = useState<boolean>(false);
+  const [imageURL, setImageURL] = useState<string>('');
 
 
   function compileLocations(data: any[]) {
@@ -32,6 +35,15 @@ const App = () => {
       };
     });
     setLocations(locations);
+  }
+
+  function viewImageFullscreen(imageURL: string) {
+    setImageURL(imageURL);
+    setImageModalOpen(true);
+  }
+
+  function closeImageFullscreen() {
+    setImageModalOpen(false);
   }
 
   useEffect(() => {
@@ -84,7 +96,7 @@ const App = () => {
           }
           </div>
           {isMobile && selected &&
-            <PlaceDetailsPane data={data?.results.find((item: any) => item.properties.Name.title[0].text.content === selected)} setSelected={setSelected}/>
+            <PlaceDetailsPane data={data?.results.find((item: any) => item.properties.Name.title[0].text.content === selected)} setSelected={setSelected} viewImageFullscreen={viewImageFullscreen}/>
           }
         </div>
         <div className="w-full md:w-2/3 bg-midnight relative flex flex-col justify-end px-4 md:h-auto flex-grow">
@@ -105,10 +117,11 @@ const App = () => {
             
           </div>
           {!isMobile && selected &&
-          <PlaceDetailsPane data={data?.results.find((item: any) => item.properties.Name.title[0].text.content === selected)} setSelected={setSelected}/>
+          <PlaceDetailsPane data={data?.results.find((item: any) => item.properties.Name.title[0].text.content === selected)} setSelected={setSelected} viewImageFullscreen={viewImageFullscreen}/>
           }
         </div>
       </div>
+      <ImageFullscreenModal imageURL={imageURL} open={imageModalOpen} close={closeImageFullscreen}/>
       <Analytics />
     </div>
   );

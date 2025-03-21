@@ -5,7 +5,7 @@ export default function LocationEntry(props: {details: any, selected: boolean}) 
         <div className={props.selected ? "w-full flex flex-row justify-between px-4 bg-herb border-herb border-2 rounded-2xl" : "hover:bg-herb transition-colors group w-full flex flex-row justify-between px-4 bg-white border-herb border-2 rounded-2xl"}>
             <div className="flex flex-col">
                 <div className="flex gap-3">
-                <div className="bg-midnight rounded-full w-10 h-10 border-celeste border-2 flex my-auto">
+                <div className="bg-midnight rounded-full min-w-10 min-h-10 border-celeste border-2 flex my-auto">
                     <div className="text-celeste text-center font-extrabold text-2xl m-auto">{props.details.properties.MarkerID.unique_id.number}</div>
                     </div>
                     <div>
