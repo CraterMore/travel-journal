@@ -4,6 +4,7 @@ import { Map, AdvancedMarker, useMap } from '@vis.gl/react-google-maps';
 import LoadingList from './assets/components/LoadingList';
 import PlaceDetailsPane from './assets/components/PlaceDetailsPane';
 import { Analytics } from '@vercel/analytics/react';
+import ImageFullscreenModal from './assets/components/ImageFullscreenModal';
 type Poi ={ key: string, markerNum: number, location: google.maps.LatLngLiteral };
 
 const App = () => {
@@ -18,6 +19,8 @@ const App = () => {
   const [selected, setSelected] = useState<string | null>(null);
   const [data, setData] = useState<NotionData | null>(null);
   const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 768);
+  const [imageModalOpen, setImageModalOpen] = useState<boolean>(false);
+  const [imageURL, setImageURL] = useState<string>('');
 
 
   function compileLocations(data: any[]) {
@@ -32,6 +35,15 @@ const App = () => {
       };
     });
     setLocations(locations);
+  }
+
+  function viewImageFullscreen(imageURL: string) {
+    setImageURL(imageURL);
+    setImageModalOpen(true);
+  }
+
+  function closeImageFullscreen() {
+    setImageModalOpen(false);
   }
 
   useEffect(() => {
@@ -69,7 +81,7 @@ const App = () => {
       <div className="max-w-screen-xl mx-auto bg-slate-300 flex md:flex-row flex-col-reverse h-dvh">
         <div className="w-full md:w-1/3 bg-lionsmane flex flex-col h-2/3 md:h-full">
           <h1 className="font-bold text-4xl p-2 text-center font-display">Carter's Travel Log</h1>
-          <div className="text-center text-sm -translate-y-2">Check back soon for more!</div>
+          <div className="text-center text-sm -translate-y-2">My recommendations and experiences in London and Paris!</div>
           <div className="flex flex-col gap-2 px-3 overflow-y-auto mb-3">
             {data ? data.results.map((item: any, index: number) => (
               <a className="cursor-pointer" key={index} onClick={() => {
@@ -84,7 +96,7 @@ const App = () => {
           }
           </div>
           {isMobile && selected &&
-            <PlaceDetailsPane data={data?.results.find((item: any) => item.properties.Name.title[0].text.content === selected)} setSelected={setSelected}/>
+            <PlaceDetailsPane data={data?.results.find((item: any) => item.properties.Name.title[0].text.content === selected)} setSelected={setSelected} viewImageFullscreen={viewImageFullscreen}/>
           }
         </div>
         <div className="w-full md:w-2/3 bg-midnight relative flex flex-col justify-end px-4 md:h-auto flex-grow">
@@ -105,10 +117,11 @@ const App = () => {
             
           </div>
           {!isMobile && selected &&
-          <PlaceDetailsPane data={data?.results.find((item: any) => item.properties.Name.title[0].text.content === selected)} setSelected={setSelected}/>
+          <PlaceDetailsPane data={data?.results.find((item: any) => item.properties.Name.title[0].text.content === selected)} setSelected={setSelected} viewImageFullscreen={viewImageFullscreen}/>
           }
         </div>
       </div>
+      <ImageFullscreenModal imageURL={imageURL} open={imageModalOpen} close={closeImageFullscreen}/>
       <Analytics />
     </div>
   );

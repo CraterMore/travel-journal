@@ -6,11 +6,10 @@ import { formatDate, renderStars } from "../utils/formattingFunctions";
 import { FaMoneyBill } from "react-icons/fa6";
 
 
-export default function PlaceDetailsPane(props : {data: any, setSelected: (place: string | null) => void}) {
-
+export default function PlaceDetailsPane(props : {data: any, setSelected: (place: string | null) => void, viewImageFullscreen: (imageURL: string) => void}) {
 
     return (
-    <div className="bg-white drop-shadow-xl h-2/3 w-full md:relative md:w-96 md:rounded-t-3xl fixed z-10 overflow-y-auto backface-visibility-hidden">
+    <div className="bg-white drop-shadow-xl h-2/3 w-full md:relative md:w-96 md:rounded-t-3xl fixed z-10 overflow-y-auto backface-visibility-hidden no-scrollbar">
         <div className="flex flex-row gap-3 justify-start px-4 w-full h-20 bg-marigold">
             <div className="my-auto min-w-fit">
                 <FaArrowLeft size={36} className="cursor-pointer p-1 hover:p-0 hover:transition-all" onClick={() => props.setSelected(null)}/>
@@ -61,21 +60,21 @@ export default function PlaceDetailsPane(props : {data: any, setSelected: (place
         <div className="relative mt-8">
             {props.data.properties.Images.files[0] ? 
             <div className="absolute left-4 shadow-xl -rotate-6 w-48 h-56 bg-celeste flex flex-row justify-center z-10">
-                <div className="w-40 h-40 border-midnight border-4 mt-4">
+                <div className="w-40 h-40 border-midnight border-4 mt-4 cursor-pointer" onClick={() => props.viewImageFullscreen(props.data.properties.Images.files[0].file.url)}>
                     <img src={props.data.properties.Images.files[0].file.url} className="w-full h-full object-cover bg-orange-100"/>
                 </div>
             </div>
             : <></>}
             {props.data.properties.Images.files[1] ? 
             <div className="absolute left-44 shadow-xl top-8 rotate-3 w-48 h-56 bg-celeste flex flex-row justify-center z-20">
-                <div className="w-40 h-40 border-midnight border-4 mt-4">
+                <div className="w-40 h-40 border-midnight border-4 mt-4 cursor-pointer" onClick={() => props.viewImageFullscreen(props.data.properties.Images.files[1].file.url)}>
                     <img src={props.data.properties.Images.files[1].file.url} className="w-full h-full object-cover bg-orange-100"/>
                 </div>
              </div>
             : <></>}
             {props.data.properties.Images.files[2] ? 
             <div className="absolute left-20 shadow-xl top-48 -rotate-2 w-48 h-56 bg-celeste flex flex-row justify-center z-30">
-                <div className="w-40 h-40 border-midnight border-4 mt-4">
+                <div className="w-40 h-40 border-midnight border-4 mt-4 cursor-pointer" onClick={() => props.viewImageFullscreen(props.data.properties.Images.files[2].file.url)}>
                     <img src={props.data.properties.Images.files[2].file.url} className="w-full h-full object-cover bg-orange-100"/>
                 </div>
              </div>
