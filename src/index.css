@@ -18,3 +18,7 @@
         src: url('./assets/fonts/Caveat-VariableFont_wght.ttf') format('truetype');
     }
 }
+
+.backface-visibility-hidden {
+    backface-visibility: hidden;
+}
