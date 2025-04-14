@@ -73,7 +73,7 @@ const App = () => {
             .then((response) => response.json())
             .then((data) => {
               setDatabaseProps(data);
-              console.log("Database properties:", data);
+              console.log("Database properties:", databaseProps);
             })
             .catch((error) => console.error("Error fetching database:", error));
   }, []);
