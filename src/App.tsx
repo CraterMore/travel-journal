@@ -7,6 +7,7 @@ import { Analytics } from '@vercel/analytics/react';
 import FilterModal from './assets/components/FilterModal';
 import ImageFullscreenModal from './assets/components/ImageFullscreenModal';
 type Poi ={ key: string, markerNum: number, location: google.maps.LatLngLiteral };
+import { MdSearch } from "react-icons/md";
 
 const App = () => {
   const map = useMap();
@@ -100,23 +101,30 @@ const App = () => {
   return (
     <div className="bg-lionsmane">
       <div className="max-w-screen-xl mx-auto bg-slate-300 flex md:flex-row flex-col-reverse h-dvh">
-        <div className="w-full md:w-1/3 bg-lionsmane flex flex-col h-2/3 md:h-full">
+        <div className="w-full md:w-1/3 bg-lionsmane flex flex-col h-2/3 md:h-full overflow-y-auto">
           <h1 className="font-bold text-4xl p-2 text-center font-display">Carter's Travel Log</h1>
-          <FilterModal isOpen={filterModalOpen} onClose={() => setFilterModalOpen(false)} options={{Type: ["Type 1", "Type 2"], Price: ["-", "$", "$$", "$$$"], Tags: ["Cool", "Upscale"]}} appliedFilters={filters} onApply={(data) => setFilters(data)}/>
-          <div className="text-center text-sm -translate-y-2">My recommendations and experiences in London and Paris!</div>
-          <div className="mb-2 px-3">
-            <button
+          <FilterModal isOpen={filterModalOpen} onClose={() => setFilterModalOpen(false)} options={{Type: ["Restaurant", "Cafe", "Bakery", "Pub", "Bar", "Attraction", "Landmark", "Park", "Market", "Store", "Museum"], Price: ["-", "$", "$$", "$$$"], Tags: ["Cool", "Upscale"]}} appliedFilters={filters} onApply={(data) => setFilters(data)}/>
+          <div className="text-center text-sm text-balance">My recommendations and experiences in London and Paris!</div>
+          <div className="sticky top-0 z-10 bg-lionsmane">
+            <div className="my-2 px-3 flex flex-row max-w-full items-center">
+              <button
               className="px-4 py-2 text-sm font-medium text-white bg-midnight rounded hover:bg-sky-800"
               onClick={() => setFilterModalOpen(true)}
-            >
+              >
               Filters {(filters.Type.length + filters.Price.length + filters.Tags.length > 0) ? " • " + (filters.Type.length + filters.Price.length + filters.Tags.length) : ''}
-            </button>
+              </button>
+              <div className="border-celeste border-2 h-full flex-grow ml-2 rounded-full bg-teal-50 flex flex-row items-center justify-between px-2">
+                <div className="italic text-midnight">Coming soon!</div>
+                <MdSearch size={30} color="#013D5A"/>
+              </div>
+            </div>
           </div>
           
-          <div className="flex flex-col gap-2 px-3 overflow-y-auto mb-3">
+          <div className="flex flex-col gap-2 px-3 mb-3">
             {data ? data.results.filter((item: any) => {
               const type = item.properties.Type.select.name;
               const price = item.properties.Price.select.name;
+              // TODO: Add tags filter
               return (
                 (filters.Type.length === 0 || filters.Type.includes(type)) &&
                 (filters.Price.length === 0 || filters.Price.includes(price)) &&

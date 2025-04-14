@@ -46,7 +46,7 @@ export default function FilterModal(props: FilterModalProps) {
           <h2 className="text-lg font-semibold">Filter Settings</h2>
         </div>
         <div className="p-4 space-y-6">
-          {(['Type', 'Price', 'Tags'] as const).map((category) => (
+          {(['Type', 'Price'] as const).map((category) => (
             <div key={category}>
               <h3 className="font-medium text-gray-700 capitalize">{category}</h3>
               <div className="flex-row flex flex-wrap gap-1">
@@ -82,7 +82,7 @@ export default function FilterModal(props: FilterModalProps) {
             Cancel
           </button>
           <button
-            className="px-4 py-2 text-sm font-medium text-white bg-midnight rounded hover:bg-blue-800"
+            className="px-4 py-2 text-sm font-medium text-white bg-midnight rounded hover:bg-sky-800"
             onClick={handleApply}
           >
             Apply
