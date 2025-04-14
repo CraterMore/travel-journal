@@ -9,7 +9,7 @@ export default function LocationEntry(props: {details: any, selected: boolean}) 
                     <div className="text-celeste text-center font-extrabold text-2xl m-auto">{props.details.properties.MarkerID.unique_id.number}</div>
                     </div>
                     <div>
-                        <h1 className={props.selected ? "text-3xl font-display text-white" : "text-3xl text-herb transition-colors group-hover:text-white font-display"}>{props.details.properties.Name.title[0].text.content}</h1>
+                        <h1 className={props.selected ? "md:text-3xl text-2xl text-balance font-display text-white" : "md:text-3xl text-2xl text-balance text-herb transition-colors group-hover:text-white font-display"}>{props.details.properties.Name.title[0].text.content}</h1>
                         <div className="my-auto flex flex-row items-center -translate-y-1">
                             <p className={props.selected ? "font-light mr-1 text-white" : "font-light mr-1 text-herb transition-colors group-hover:text-white"}>{props.details.properties.Type.select.name} -</p>
                             <p className={props.selected ? "mr-1 font-light text-white" : "mr-1 font-light transition-colors group-hover:text-white"}>{props.details.properties.Rating.number}/5</p>
