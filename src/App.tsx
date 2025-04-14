@@ -19,10 +19,18 @@ const App = () => {
   const [locations, setLocations] = useState<any[]>([]);
   const [selected, setSelected] = useState<string | null>(null);
   const [databaseProps, setDatabaseProps] = useState<any | null>(null);
+  const [filters, setFilters] = useState<any | null>(
+    {
+      Type: [],
+      Price: [],
+      Tags: []
+    }
+  );
   const [data, setData] = useState<NotionData | null>(null);
   const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 768);
   const [imageModalOpen, setImageModalOpen] = useState<boolean>(false);
   const [imageURL, setImageURL] = useState<string>('');
+  const [filterModalOpen, setFilterModalOpen] = useState<boolean>(false);
 
 
   function compileLocations(data: any[]) {
@@ -48,6 +56,10 @@ const App = () => {
     setImageModalOpen(false);
   }
 
+  // useEffect(() => {
+  //   newResults = 
+  // }, [filters]);
+
   useEffect(() => {
       fetch('/api/getNotionData?databaseId=179841179fa380349062c49a3cb5429f')
           .then((response) => response.json())
@@ -60,6 +72,7 @@ const App = () => {
             .then((response) => response.json())
             .then((data) => {
               setDatabaseProps(data);
+              console.log("Database properties:", data);
             })
             .catch((error) => console.error("Error fetching database:", error));
   }, []);
@@ -89,10 +102,27 @@ const App = () => {
       <div className="max-w-screen-xl mx-auto bg-slate-300 flex md:flex-row flex-col-reverse h-dvh">
         <div className="w-full md:w-1/3 bg-lionsmane flex flex-col h-2/3 md:h-full">
           <h1 className="font-bold text-4xl p-2 text-center font-display">Carter's Travel Log</h1>
-          <FilterModal isOpen={true} onClose={() => console.log("close")} options={{type: ["Type 1", "Type 2"], price: ["-", "$"], tags: ["Cool", "Upscale"]}} onApply={(data) => console.log("Saved")}/>
+          <FilterModal isOpen={filterModalOpen} onClose={() => setFilterModalOpen(false)} options={{Type: ["Type 1", "Type 2"], Price: ["-", "$", "$$", "$$$"], Tags: ["Cool", "Upscale"]}} appliedFilters={filters} onApply={(data) => setFilters(data)}/>
           <div className="text-center text-sm -translate-y-2">My recommendations and experiences in London and Paris!</div>
+          <div className="mb-2 px-3">
+            <button
+              className="px-4 py-2 text-sm font-medium text-white bg-midnight rounded hover:bg-sky-800"
+              onClick={() => setFilterModalOpen(true)}
+            >
+              Filters {(filters.Type.length + filters.Price.length + filters.Tags.length > 0) ? " • " + (filters.Type.length + filters.Price.length + filters.Tags.length) : ''}
+            </button>
+          </div>
+          
           <div className="flex flex-col gap-2 px-3 overflow-y-auto mb-3">
-            {data ? data.results.map((item: any, index: number) => (
+            {data ? data.results.filter((item: any) => {
+              const type = item.properties.Type.select.name;
+              const price = item.properties.Price.select.name;
+              return (
+                (filters.Type.length === 0 || filters.Type.includes(type)) &&
+                (filters.Price.length === 0 || filters.Price.includes(price)) &&
+                (filters.Tags.length === 0)
+              );
+            }).map((item: any, index: number) => (
               <a className="cursor-pointer" key={index} onClick={() => {
                 setSelected(item.properties.Name.title[0].text.content)
                 map?.panTo({lat: item.properties.Latitude.number, lng: item.properties.Longitude.number});

@@ -1,28 +1,22 @@
 import { useState } from 'react';
+import { FilterClassProps } from '../utils/filterClass';
 
 interface FilterModalProps {
   isOpen: boolean;
   onClose: () => void;
-  options: {
-    type: string[];
-    price: string[];
-    tags: string[];
-  };
-  onApply: (selectedFilters: {
-    type: string[];
-    price: string[];
-    tags: string[];
-  }) => void;
+  options: FilterClassProps;
+  onApply: (selectedFilters: FilterClassProps) => void;
+  appliedFilters: FilterClassProps;
 }
 
 export default function FilterModal(props: FilterModalProps) {
-  const [selectedFilters, setSelectedFilters] = useState({
-    type: [] as string[],
-    price: [] as string[],
-    tags: [] as string[],
+  const [selectedFilters, setSelectedFilters] = useState<FilterClassProps>({
+    Type: [] as string[],
+    Price: [] as string[],
+    Tags: [] as string[],
   });
 
-  const handleToggle = (category: 'type' | 'price' | 'tags', value: string) => {
+  const handleToggle = (category: 'Type' | 'Price' | 'Tags', value: string) => {
     setSelectedFilters((prev) => {
       const isSelected = prev[category].includes(value);
       const updatedCategory = isSelected
@@ -38,6 +32,11 @@ export default function FilterModal(props: FilterModalProps) {
     props.onClose();
   };
 
+  const handleCancel = () => {
+    setSelectedFilters(props.appliedFilters);
+    props.onClose();
+  }
+
   if (!props.isOpen) return null;
 
   return (
@@ -47,13 +46,19 @@ export default function FilterModal(props: FilterModalProps) {
           <h2 className="text-lg font-semibold">Filter Settings</h2>
         </div>
         <div className="p-4 space-y-6">
-          {(['type', 'price', 'tags'] as const).map((category) => (
+          {(['Type', 'Price', 'Tags'] as const).map((category) => (
             <div key={category}>
               <h3 className="font-medium text-gray-700 capitalize">{category}</h3>
-              <div className="mt-2 space-y-1">
+              <div className="flex-row flex flex-wrap gap-1">
                 {props.options[category].map((option) => (
                   <div key={option} className="flex items-center space-x-2">
-                    <input
+                    <button
+                      className={selectedFilters[category].includes(option) ? "px-4 py-2 text-sm font-medium text-gray-700 bg-celeste rounded-lg hover:bg-teal-100 border-midnight border-2" : "px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300"}
+                      onClick={() => handleToggle(category, option)}
+                    >
+                      {option}
+                    </button>
+                    {/* <input
                       type="checkbox"
                       id={`${category}-${option}`}
                       className="form-checkbox h-4 w-4 text-blue-600"
@@ -62,7 +67,7 @@ export default function FilterModal(props: FilterModalProps) {
                     />
                     <label htmlFor={`${category}-${option}`} className="text-gray-600">
                       {option}
-                    </label>
+                    </label> */}
                   </div>
                 ))}
               </div>
@@ -72,7 +77,7 @@ export default function FilterModal(props: FilterModalProps) {
         <div className="flex items-center justify-end p-4 border-t">
           <button
             className="px-4 py-2 mr-2 text-sm font-medium text-gray-700 bg-gray-200 rounded hover:bg-gray-300"
-            onClick={props.onClose}
+            onClick={handleCancel}
           >
             Cancel
           </button>
