@@ -1,12 +1,14 @@
 import { useState, useEffect, useCallback } from 'react';
 import LocationEntry from './assets/components/LocationEntry';
-import { Map, AdvancedMarker, Pin, useMap } from '@vis.gl/react-google-maps';
-import { FaArrowLeft } from "react-icons/fa";
+import { Map, AdvancedMarker, useMap } from '@vis.gl/react-google-maps';
+import LoadingList from './assets/components/LoadingList';
+import PlaceDetailsPane from './assets/components/PlaceDetailsPane';
+import { Analytics } from '@vercel/analytics/react';
 import FilterModal from './assets/components/FilterModal';
-type Poi ={ key: string, location: google.maps.LatLngLiteral }
+type Poi ={ key: string, markerNum: number, location: google.maps.LatLngLiteral };
 
 const App = () => {
-
+  const map = useMap();
 
   interface NotionData {
     object: string;
@@ -14,16 +16,17 @@ const App = () => {
   }
 
   const [locations, setLocations] = useState<any[]>([]);
-
   const [selected, setSelected] = useState<string | null>(null);
-
   const [databaseProps, setDatabaseProps] = useState<any | null>(null);
   const [data, setData] = useState<NotionData | null>(null);
+  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 768);
+
 
   function compileLocations(data: any[]) {
     const locations = data.map((item: any) => {
       return {
         key: item.properties.Name.title[0].text.content,
+        markerNum: item.properties.MarkerID.unique_id.number,
         location: {
           lat: item.properties.Latitude.number,
           lng: item.properties.Longitude.number,
@@ -33,21 +36,30 @@ const App = () => {
     setLocations(locations);
   }
 
-    useEffect(() => {
-        fetch('/api/getNotionData?databaseId=179841179fa380349062c49a3cb5429f')
-            .then((response) => response.json())
-            .then((data) => {
-              setData(data);
-              compileLocations(data.results);
-            })
-            .catch((error) => console.error("Error fetching database pages:", error));
+  useEffect(() => {
+      fetch('/api/getNotionData?databaseId=179841179fa380349062c49a3cb5429f')
+          .then((response) => response.json())
+          .then((data) => {
+            setData(data);
+            compileLocations(data.results);
+          })
+          .catch((error) => console.error("Error fetching database pages:", error));
         fetch('/api/getNotionDatabaseProps?databaseId=179841179fa380349062c49a3cb5429f')
             .then((response) => response.json())
             .then((data) => {
               setDatabaseProps(data);
             })
             .catch((error) => console.error("Error fetching database:", error));
-    }, []);
+  }, []);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // async function fetchData() {
   //   try {
@@ -62,23 +74,33 @@ const App = () => {
 
   return (
     <div className="bg-lionsmane">
-      <div className="max-w-screen-xl mx-auto bg-slate-300 flex h-screen">
-        <div className="w-1/3 bg-lionsmane flex flex-col">
-          <h1 className="font-bold text-4xl p-2 text-center">Carter's Travel Log</h1>
+      <div className="max-w-screen-xl mx-auto bg-slate-300 flex md:flex-row flex-col-reverse h-dvh">
+        <div className="w-full md:w-1/3 bg-lionsmane flex flex-col h-2/3 md:h-full">
+          <h1 className="font-bold text-4xl p-2 text-center font-display">Carter's Travel Log</h1>
           <FilterModal isOpen={true} onClose={() => console.log("close")} options={{type: ["Type 1", "Type 2"], price: ["-", "$"], tags: ["Cool", "Upscale"]}} onApply={(data) => console.log("Saved")}/>
-          <div className="flex flex-col gap-2 px-2">
-            {data && data.results.map((item: any, index: number) => (
-              <a className="cursor-pointer" key={index} onClick={() => {setSelected(item.properties.Name.title[0].text.content)}}>
+          <div className="text-center text-sm -translate-y-2">Check back soon for more!</div>
+          <div className="flex flex-col gap-2 px-3 overflow-y-auto mb-3">
+            {data ? data.results.map((item: any, index: number) => (
+              <a className="cursor-pointer" key={index} onClick={() => {
+                setSelected(item.properties.Name.title[0].text.content)
+                map?.panTo({lat: item.properties.Latitude.number, lng: item.properties.Longitude.number});
+                }}>
                 <LocationEntry details={item} selected={selected==item.properties.Name.title[0].text.content}/>
               </a>
-            ))}
+            ))
+            :
+            <LoadingList/>
+          }
           </div>
+          {isMobile && selected &&
+            <PlaceDetailsPane data={data?.results.find((item: any) => item.properties.Name.title[0].text.content === selected)} setSelected={setSelected}/>
+          }
         </div>
-        <div className="w-2/3 bg-midnight relative flex flex-col justify-end px-4">
+        <div className="w-full md:w-2/3 bg-midnight relative flex flex-col justify-end px-4 md:h-auto flex-grow">
           <div className="w-full h-full absolute inset-0">
             <Map
-            defaultZoom={14}
-            defaultCenter={ { lat: 51.509865, lng: -0.118092 } }
+            defaultZoom={isMobile ? 13 : 14}
+            defaultCenter={ { lat: 51.523114881185045, lng: -0.10665739073381586 } }
             streetViewControl={false}
             fullscreenControl={false}
             mapId="c43f84728610854c"
@@ -86,31 +108,22 @@ const App = () => {
             //   console.log('camera changed:', ev.detail.center, 'zoom:', ev.detail.zoom)
             // }
             >
-              <PoiMarkers pois={locations} setSelected={setSelected} />
+              <PoiMarkers pois={locations} setSelected={setSelected} selected={selected} />
               
             </Map>
             
           </div>
-          {selected &&
-          <div className="bg-white drop-shadow-xl h-2/3 w-96 rounded-t-3xl relative z-10">
-            <div className="absolute flex flex-row gap-3 justify-start px-4 -top-10 -right-5 w-[110%] rounded-2xl rotate-1 h-24 bg-marigold">
-              <FaArrowLeft size={32} className="my-auto cursor-pointer" onClick={() => setSelected(null)}/>
-              <div className="my-auto h-fit w-fit text-3xl">
-                {selected}
-              </div>
-            </div>
-            {selected}
-          </div>
+          {!isMobile && selected &&
+          <PlaceDetailsPane data={data?.results.find((item: any) => item.properties.Name.title[0].text.content === selected)} setSelected={setSelected}/>
           }
         </div>
       </div>
+      <Analytics />
     </div>
   );
 };
 
-
-
-const PoiMarkers = (props: {pois: Poi[], setSelected: (place: string | null) => void}) => {
+const PoiMarkers = (props: {pois: Poi[], setSelected: (place: string | null) => void, selected: string | null}) => {
   const map = useMap();
   
   const handleClick = useCallback((ev: google.maps.MapMouseEvent) => {
@@ -131,7 +144,10 @@ const PoiMarkers = (props: {pois: Poi[], setSelected: (place: string | null) => 
             props.setSelected(poi.key);
             handleClick(ev);
           }}>
-        <Pin background={'#FBBC04'} glyphColor={'#000'} borderColor={'#000'} />
+            <div className={props.selected===poi.key ? "bg-midnight rounded-full w-10 h-10 animate-bounce border-celeste border-2 flex": "bg-midnight rounded-full w-8 h-8 border-celeste border-2 flex"}>
+              <div className="text-celeste text-center font-bold text-xl m-auto">{poi.markerNum}</div>
+            </div>
+        {/* <Pin background={'#FBBC04'} glyphColor={'#000'} borderColor={'#000'} /> */}
         </AdvancedMarker>
       ))}
     </>

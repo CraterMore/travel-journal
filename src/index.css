@@ -1,3 +1,24 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+    @font-face {
+        font-family: 'Yeseva One';
+        font-style: normal;
+        font-weight: 400;
+        font-display: swap;
+        src: url('./assets/fonts/YesevaOne-Regular.ttf') format('truetype');
+    }
+    @font-face {
+        font-family: 'Caveat';
+        font-style: normal;
+        font-weight: 400;
+        font-display: swap;
+        src: url('./assets/fonts/Caveat-VariableFont_wght.ttf') format('truetype');
+    }
+}
+
+.backface-visibility-hidden {
+    backface-visibility: hidden;
+}
