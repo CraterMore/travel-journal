@@ -7,7 +7,7 @@ import { Analytics } from '@vercel/analytics/react';
 import FilterModal from './assets/components/FilterModal';
 import ImageFullscreenModal from './assets/components/ImageFullscreenModal';
 type Poi ={ key: string, markerNum: number, location: google.maps.LatLngLiteral };
-import { MdSearch } from "react-icons/md";
+import { MdSearch, MdClear } from "react-icons/md";
 
 const App = () => {
   const map = useMap();
@@ -27,6 +27,7 @@ const App = () => {
       Tags: []
     }
   );
+  const [searchTerms, setSearchTerms] = useState<string>('');
   const [data, setData] = useState<NotionData | null>(null);
   const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 768);
   const [imageModalOpen, setImageModalOpen] = useState<boolean>(false);
@@ -114,8 +115,12 @@ const App = () => {
               Filters {(filters.Type.length + filters.Price.length + filters.Tags.length > 0) ? " • " + (filters.Type.length + filters.Price.length + filters.Tags.length) : ''}
               </button>
               <div className="border-celeste border-2 h-full flex-grow ml-2 rounded-full bg-teal-50 flex flex-row items-center justify-between px-2">
-                <div className="italic text-midnight">Coming soon!</div>
-                <MdSearch size={30} color="#013D5A"/>
+                <input className="text-midnight bg-transparent flex-grow focus:outline-none" placeholder='Search' value={searchTerms} onChange={(input) => {setSearchTerms(input.target.value)}}></input>
+                {searchTerms == "" ? <MdSearch size={30} color="#013D5A"/> :
+                <button className="text-midnight" onClick={() => {setSearchTerms('')}}>
+                  <MdClear size={30} color="#013D5A"/>
+                </button>
+                }
               </div>
             </div>
           </div>
@@ -128,7 +133,8 @@ const App = () => {
               return (
                 (filters.Type.length === 0 || filters.Type.includes(type)) &&
                 (filters.Price.length === 0 || filters.Price.includes(price)) &&
-                (filters.Tags.length === 0)
+                (filters.Tags.length === 0) &&
+                (item.properties.Name.title[0].text.content.toLowerCase().includes(searchTerms.toLowerCase()) || item.properties.Description.rich_text[0].text.content.toLowerCase().includes(searchTerms.toLowerCase()))
               );
             }).map((item: any, index: number) => (
               <a className="cursor-pointer" key={index} onClick={() => {
@@ -154,9 +160,6 @@ const App = () => {
             streetViewControl={false}
             fullscreenControl={false}
             mapId="c43f84728610854c"
-            // onCameraChanged={ (ev: MapCameraChangedEvent) =>
-            //   console.log('camera changed:', ev.detail.center, 'zoom:', ev.detail.zoom)
-            // }
             >
               <PoiMarkers pois={locations} setSelected={setSelected} selected={selected} />
               
